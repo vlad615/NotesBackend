@@ -1,0 +1,27 @@
+[project]
+name = "todolists"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "VladislavAmbrosov",email = "ambrosov413@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "fastapi (>=0.140.13,<0.141.0)",
+    "uvicorn (>=0.51.0,<0.52.0)"
+]
+
+[tool.fastapi]
+entrypoint = "app.main:app"
+[tool.poetry]
+packages = [{include = "todolists", from = "src"}]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[dependency-groups]
+dev = [
+    "black (>=26.5.1,<27.0.0)"
+]
