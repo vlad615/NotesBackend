@@ -5,11 +5,6 @@ from api import router
 app = FastAPI()
 
 
-@app.get("/")
-async def read_root():
-    return {"Hello": "World"}
-
-
 app.include_router(router)
 
 if __name__ == "__main__":

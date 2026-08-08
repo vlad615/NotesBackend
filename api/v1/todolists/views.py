@@ -1,45 +1,45 @@
 from fastapi import APIRouter
 from fastapi import HTTPException
-from datetime import datetime
+from .shemas import TodoList, TitleTodolist
+from .crud import (
+    get_todolist as getTC,
+    create_todolist as createTC,
+    change_todolist as changeTC,
+    get_todolists as getTCs,
+    delete_todolist as deleteTC,
+)
 
-router = APIRouter(prefix="/todolists")
-
-todolists = [
-    {"id": 1, "title": "To be happy", "addedDate": datetime.now(), "order": 0},
-    {"id": 2, "title": "React", "addedDate": datetime.now(), "order": 1},
-    {"id": 3, "title": "FastApi", "addedDate": datetime.now(), "order": 2},
-]
+router = APIRouter(prefix="/todo-lists", tags=["Todo Lists"])
 
 
-@router.get("/")
+@router.post("/", status_code=201, response_model=TodoList)
+def create_todolist(t: TitleTodolist):
+    return createTC(t.title)
+
+
+@router.get("/", response_model=list[TodoList])
 def get_todolists():
-    return todolists
+    return getTCs()
 
 
-@router.post("/")
-def create_todolist(title: str):
-    new_todolist = {
-        "id": len(todolists) + 1,
-        "title": title,
-        "addedDate": datetime.now(),
-        "order": len(todolists),
-    }
-    todolists.append(new_todolist)
-    return new_todolist
-
-
-@router.get("/{todolistId}")
+@router.get("/{todolistId}", response_model=TodoList)
 def get_todolist(todolistId: int):
-    for todolist in todolists:
-        if todolist["id"] == todolistId:
-            return todolist
+    todolist = getTC(todolistId)
+    if todolist:
+        return todolist
     raise HTTPException(status_code=404, detail="To-Do list not found")
 
 
-@router.put("/{todolistId}")
-def change_todolist(todolistId: int, title: str):
-    for todolist in todolists:
-        if todolist["id"] == todolistId:
-            todolist["title"] = title
-            return todolist
+@router.put("/{todolistId}", response_model=TodoList)
+def change_todolist(todolistId: int, t: TitleTodolist):
+    todolist = changeTC(todolistId, t.title)
+    if todolist:
+        return todolist
     raise HTTPException(status_code=404, detail="To-Do list not found")
+
+
+@router.delete("/{todolistId}", status_code=204)
+def delete_todolist(todolistId: int):
+    todolist = deleteTC(todolistId)
+    if not todolist:
+        raise HTTPException(status_code=404, detail="To-Do list not found")
