@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from enum import IntEnum
 from datetime import datetime
 
@@ -18,17 +18,22 @@ class TaskPriority(IntEnum):
     Later = 4
 
 
-class CreateTaskModel(BaseModel):
-    description: str | None
+class BaseTaskModel(BaseModel):
+    description: str | None = Field(default=None, min_length=1, max_length=1000)
+    startDate: datetime | None = None
+    deadline: datetime | None = None
+
+
+class CreateTaskModel(BaseTaskModel):
     title: str
-    status: TaskStatus | None
-    priority: TaskPriority | None
-    startDate: datetime | None
-    deadline: datetime | None
+    status: TaskStatus = TaskStatus.Active
+    priority: TaskPriority = TaskPriority.Low
 
 
-class UpdateTaskModel(CreateTaskModel):
-    spendtime: datetime
+class UpdateTaskModel(BaseTaskModel):
+    spendtime_minutes: int = 0
+    status: TaskStatus | None = None
+    priority: TaskPriority | None = None
 
 
 class DomainTask(UpdateTaskModel):

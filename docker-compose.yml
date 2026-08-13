@@ -1,0 +1,16 @@
+version: "3.9"
+ 
+services:
+  db:
+    image: postgres:18
+    container_name: todo_db
+    env_file:
+      - .local.env
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql
+ 
+volumes:
+  pgdata:

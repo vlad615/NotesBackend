@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from fastapi import HTTPException
-from .shemas import TodoList, TitleTodolist
+from .shemas import TodoListResponse, CreateTodolist, UpdateTodolist
+from settings import settings
 from .crud import (
     get_todolist as getTC,
     create_todolist as createTC,
@@ -12,17 +13,17 @@ from .crud import (
 router = APIRouter(prefix="/todo-lists", tags=["Todo Lists"])
 
 
-@router.post("/", status_code=201, response_model=TodoList)
-def create_todolist(t: TitleTodolist):
+@router.post("/", status_code=201, response_model=TodoListResponse)
+def create_todolist(t: CreateTodolist):
     return createTC(t.title)
 
 
-@router.get("/", response_model=list[TodoList])
+@router.get("/", response_model=list[TodoListResponse])
 def get_todolists():
     return getTCs()
 
 
-@router.get("/{todolistId}", response_model=TodoList)
+@router.get("/{todolistId}", response_model=TodoListResponse)
 def get_todolist(todolistId: int):
     todolist = getTC(todolistId)
     if todolist:
@@ -30,8 +31,8 @@ def get_todolist(todolistId: int):
     raise HTTPException(status_code=404, detail="To-Do list not found")
 
 
-@router.put("/{todolistId}", response_model=TodoList)
-def change_todolist(todolistId: int, t: TitleTodolist):
+@router.put("/{todolistId}", response_model=TodoListResponse)
+def change_todolist(todolistId: int, t: UpdateTodolist):
     todolist = changeTC(todolistId, t.title)
     if todolist:
         return todolist
